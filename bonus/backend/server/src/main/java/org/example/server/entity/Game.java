@@ -3,6 +3,7 @@ package org.example.server.entity;
 import lombok.Getter;
 import lombok.Setter;
 import org.example.server.entity.enums.GameState;
+import org.example.server.entity.enums.PlayerState;
 
 import java.util.UUID;
 
@@ -41,5 +42,39 @@ public class Game {
         if (player1Board != null && player2Board != null){
             state = GameState.IN_PROGRESS;
         }
+    }
+    public boolean everyoneReady(){
+        return (player1 != null && player2 != null
+                && player1.getState() == PlayerState.READY && player2.getState() == PlayerState.READY);
+    }
+    public boolean playerInGame(Player player){
+        return (player.equals(player1) || player.equals(player2));
+    }
+    public boolean playerHasBoard(Player player){
+        if (player.equals(player1)){
+            return player1Board != null;
+        }
+        if (player.equals(player2)){
+            return  player2Board != null;
+        }
+        return false;
+    }
+    public Board getOpponentBoard(Player player){
+        if (state != GameState.IN_PROGRESS) return null;
+        if (player.equals(player1)){
+            return player2Board;
+        }
+        if (player.equals(player2)){
+            return  player1Board;
+        }
+        return null;
+    }
+    public void passTurn(){
+        whoTurnNow = whoTurnNow == player1 ? player2 : player1;
+    }
+    public Board getPlayerBoard(Player player){
+        if (player.equals(player1)) return player1Board;
+        if (player.equals(player2)) return player2Board;
+        return null;
     }
 }

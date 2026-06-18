@@ -3,6 +3,8 @@ package org.example.server.entity;
 import lombok.Getter;
 import org.example.server.entity.enums.ShipOrientation;
 
+import java.awt.*;
+
 @Getter
 public class Ship {
     private int size;
@@ -30,15 +32,14 @@ public class Ship {
         this.size = size;
     }
 
-    public int[][] getCoord() {
-        int[][] coord = new int[size][2];
+    public Point[] getCoord() {
+        Point[] coord = new Point[size];
         int x = xStart;
         int y = yStart;
         int dx = shipOrientation == ShipOrientation.VERTICAL ? 0 : 1;
         int dy = 1 - dx;
         for (int i = 0; i < size; i++) {
-            coord[i][0] = x;
-            coord[i][1] = y;
+            coord[i] = new Point(x, y);
             x += dx;
             y += dy;
         }
@@ -47,7 +48,7 @@ public class Ship {
 
     public boolean applyDamage() {
         if (alive()) hp--;
-        return alive();
+        return !alive();
     }
 
     public boolean alive() {
