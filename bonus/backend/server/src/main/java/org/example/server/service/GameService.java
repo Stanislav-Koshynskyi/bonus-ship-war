@@ -19,15 +19,20 @@ import static org.example.server.entity.enums.ShotResultType.*;
 @Service
 public class GameService {
     private ConcurrentHashMap<String, Game> games = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, Player> players = new ConcurrentHashMap<>();
 
-    public Game createGame(Player creator) {
+    public Game createGame(String creatorId) {
+        Player creator = players.get(creatorId);
+        if (creator == null) throw new IllegalArgumentException("not found player with id " + creatorId);
         Game game = new Game(creator);
         creator.setState(PlayerState.IN_LOBBY);
         games.put(game.getId(), game);
         return game;
     }
 
-    public Game joinGame(String gameId, Player joiner) {
+    public Game joinGame(String gameId, String  joinerId) {
+        Player joiner = players.get(joinerId);
+        if (joiner == null) throw new IllegalArgumentException("not found player with id " + joinerId);
         Game game = games.get(gameId);
         if (game == null) throw new IllegalArgumentException("Game with id " + gameId + " not found");
         if (game.getState() != GameState.WAITING_FOR_OPPONENT) throw new IllegalArgumentException("Game has started");
@@ -35,13 +40,15 @@ public class GameService {
             game.join(joiner);
             joiner.setState(PlayerState.IN_LOBBY);
             game.setState(GameState.SHIP_PLACEMENT);
-            generateBoard(gameId, game.getPlayer1());
-            generateBoard(gameId, game.getPlayer2());
+            generateBoard(gameId, game.getPlayer1().getId());
+            generateBoard(gameId, game.getPlayer2().getId());
             return game;
         }
     }
 
-    public Game ready(String gameId, Player player) {
+    public Game ready(String gameId, String playerId) {
+        Player player = players.get(playerId);
+        if (player == null) throw new IllegalArgumentException("not found player with id " + playerId);
         Game game = games.get(gameId);
         if (game == null) throw new IllegalArgumentException("Game with id " + gameId + " not found");
         if (game.getState() != GameState.SHIP_PLACEMENT) throw new IllegalArgumentException("Game has started");
@@ -61,7 +68,9 @@ public class GameService {
         }
     }
 
-    public ShotResult processShot(String gameId, Player attacker, int x, int y) {
+    public ShotResult processShot(String gameId, String attackerId, int x, int y) {
+        Player attacker = players.get(attackerId);
+        if (attacker == null) throw new IllegalArgumentException("not found player with id " + attackerId);
         Game game = games.get(gameId);
         if (game == null) throw new IllegalArgumentException("Game with id " + gameId + " not found");
         if (game.getState() != GameState.IN_PROGRESS) throw new IllegalArgumentException("Game has not started");
@@ -123,7 +132,9 @@ public class GameService {
         }
     }
 
-    public Board generateBoard(String gameId, Player player) {
+    public Board generateBoard(String gameId, String playerId) {
+        Player player = players.get(playerId);
+        if (player == null) throw new IllegalArgumentException("not found player with id " + playerId);
         Game game = games.get(gameId);
         if (game == null) throw new IllegalArgumentException("Game with id " + gameId + " not found");
         if (game.getState() != GameState.SHIP_PLACEMENT)
@@ -187,6 +198,11 @@ public class GameService {
                 }
             }
         }
+    }
+    public Player createPlayer(String nickname){
+        Player player = new Player(nickname);
+        players.put(player.getId(), player);
+        return player;
     }
 
 }
