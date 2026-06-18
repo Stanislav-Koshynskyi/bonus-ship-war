@@ -111,6 +111,7 @@ public class GameService {
                         game.setState(GameState.FINISHED);
                         shotResult.setShotResultType(WIN);
                         shotResult.setWinner(attacker);
+                        games.remove(gameId);
                     } else {
                         shotResult.setShotResultType(KILL);
 
