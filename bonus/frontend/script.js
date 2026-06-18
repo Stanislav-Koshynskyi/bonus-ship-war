@@ -26,6 +26,7 @@ const readyBtn = document.getElementById('ready-btn');
 const customTableSizes = {
     columns: Array.from({length: 12}, (_, i) => ({ idx: i, width: 25 }))
 };
+const waitingScreen = document.getElementById('waiting-screen');
 
 function showScreen(screen) {
     document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
@@ -181,7 +182,7 @@ function renderLobby(games) {
 function handleGameStateChange(game) {
     currentGame = game;
     if (game.state === 'WAITING_FOR_OPPONENT'){
-        showScreen(placementScreen);
+        showScreen(waitingScreen);
         updateStatus('Очікуємо приєднання опонента')
     }
     if (game.state === 'SHIP_PLACEMENT') {
@@ -193,8 +194,6 @@ function handleGameStateChange(game) {
         if (currentMyCells) {
             renderMyBoard({ cells: currentMyCells });
         }
-    } else if (game.state === 'FINISHED') {
-        updateStatus(`Гра завершена! Переможець: ${game.winner ? game.winner.nickName : 'невідомо'}`);
     }
 }
 
@@ -210,7 +209,7 @@ function handleShotResult(shotResult) {
             gameSubscription = null;
         }
         if (myBoard) {
-            myBoar.dispose();
+            myBoard.dispose();
             myBoard = null;
         }
         if (enemyBoard) {
