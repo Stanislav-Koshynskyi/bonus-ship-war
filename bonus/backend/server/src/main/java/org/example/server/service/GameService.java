@@ -1,5 +1,6 @@
 package org.example.server.service;
 
+import org.example.server.dto.GameDto;
 import org.example.server.entity.*;
 import org.example.server.entity.enums.CellState;
 import org.example.server.entity.enums.GameState;
@@ -135,6 +136,7 @@ public class GameService {
     public Board generateBoard(String gameId, String playerId) {
         Player player = players.get(playerId);
         if (player == null) throw new IllegalArgumentException("not found player with id " + playerId);
+        if (player.getState() != PlayerState.IN_LOBBY) throw new IllegalArgumentException("Incorrect phase for placing ship");
         Game game = games.get(gameId);
         if (game == null) throw new IllegalArgumentException("Game with id " + gameId + " not found");
         if (game.getState() != GameState.SHIP_PLACEMENT)
@@ -205,4 +207,30 @@ public class GameService {
         return player;
     }
 
+    public Game getGame(String gameId) {
+        return games.get(gameId);
+    }
+
+    public Board getPlayerBoard(String gameId, String playerId) {
+        Game game = games.get(gameId);
+        if (game == null) return null;
+        Player player = players.get(playerId);
+        if (player == null) return null;
+        return game.getPlayerBoard(player);
+    }
+
+    public Board getEnemyBoard(String gameId, String playerId) {
+        Game game = games.get(gameId);
+        if (game == null) return null;
+        Player player = players.get(playerId);
+        if (player == null) return null;
+        return game.getOpponentBoard(player);
+    }
+
+    public List<GameDto> getWaitingGames() {
+        return games.values().stream()
+                .filter(g -> g.getState() == GameState.WAITING_FOR_OPPONENT)
+                .map(GameDto::new)
+                .toList();
+    }
 }
