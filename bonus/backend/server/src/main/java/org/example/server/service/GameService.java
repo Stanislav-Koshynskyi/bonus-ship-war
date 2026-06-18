@@ -31,13 +31,14 @@ public class GameService {
         return game;
     }
 
-    public Game joinGame(String gameId, String  joinerId) {
+    public Game joinGame(String gameId, String joinerId) {
         Player joiner = players.get(joinerId);
         if (joiner == null) throw new IllegalArgumentException("not found player with id " + joinerId);
         Game game = games.get(gameId);
         if (game == null) throw new IllegalArgumentException("Game with id " + gameId + " not found");
-        if (game.getState() != GameState.WAITING_FOR_OPPONENT) throw new IllegalArgumentException("Game has started");
         synchronized (game) {
+            if (game.getState() != GameState.WAITING_FOR_OPPONENT)
+                throw new IllegalArgumentException("Game has started");
             game.join(joiner);
             joiner.setState(PlayerState.IN_LOBBY);
             generateBoard(gameId, game.getPlayer1().getId());
@@ -51,8 +52,8 @@ public class GameService {
         if (player == null) throw new IllegalArgumentException("not found player with id " + playerId);
         Game game = games.get(gameId);
         if (game == null) throw new IllegalArgumentException("Game with id " + gameId + " not found");
-        if (game.getState() != GameState.SHIP_PLACEMENT) throw new IllegalArgumentException("Game has started");
         synchronized (game) {
+            if (game.getState() != GameState.SHIP_PLACEMENT) throw new IllegalArgumentException("Game has started");
             if (!game.playerInGame(player)) throw new IllegalArgumentException("That not your game");
             if (game.playerHasBoard(player)) {
                 player.setState(PlayerState.READY);
@@ -73,10 +74,10 @@ public class GameService {
         if (attacker == null) throw new IllegalArgumentException("not found player with id " + attackerId);
         Game game = games.get(gameId);
         if (game == null) throw new IllegalArgumentException("Game with id " + gameId + " not found");
-        if (game.getState() != GameState.IN_PROGRESS) throw new IllegalArgumentException("Game has not started");
-        if (!game.playerInGame(attacker)) throw new IllegalArgumentException("That not your game");
-        if (!game.getWhoTurnNow().equals(attacker)) throw new IllegalArgumentException("Not not your turn");
         synchronized (game) {
+            if (game.getState() != GameState.IN_PROGRESS) throw new IllegalArgumentException("Game has not started");
+            if (!game.playerInGame(attacker)) throw new IllegalArgumentException("That not your game");
+            if (!game.getWhoTurnNow().equals(attacker)) throw new IllegalArgumentException("Not not your turn");
             Board opponentBoard = game.getOpponentBoard(attacker);
             ShotResult shotResult = new ShotResult();
             if (opponentBoard.getCellState(x, y) != CellState.VOID
@@ -134,15 +135,16 @@ public class GameService {
     }
 
     public Board generateBoard(String gameId, String playerId) {
-        Player player = players.get(playerId);
-        if (player == null) throw new IllegalArgumentException("not found player with id " + playerId);
-        if (player.getState() != PlayerState.IN_LOBBY) throw new IllegalArgumentException("Incorrect phase for placing ship");
         Game game = games.get(gameId);
         if (game == null) throw new IllegalArgumentException("Game with id " + gameId + " not found");
-        if (game.getState() != GameState.SHIP_PLACEMENT)
-            throw new IllegalArgumentException("Not a ship placement phase");
-        if (!game.playerInGame(player)) throw new IllegalArgumentException("That not your game");
         synchronized (game) {
+            if (game.getState() != GameState.SHIP_PLACEMENT)
+                throw new IllegalArgumentException("Not a ship placement phase");
+            Player player = players.get(playerId);
+            if (player == null) throw new IllegalArgumentException("not found player with id " + playerId);
+            if (player.getState() != PlayerState.IN_LOBBY)
+                throw new IllegalArgumentException("Incorrect phase for placing ship");
+            if (!game.playerInGame(player)) throw new IllegalArgumentException("That not your game");
             List<Ship> ships = generateShips();
             Board board = new Board(ships);
             game.setPlayerBoard(player, board);
@@ -201,7 +203,8 @@ public class GameService {
             }
         }
     }
-    public Player createPlayer(String nickname){
+
+    public Player createPlayer(String nickname) {
         Player player = new Player(nickname);
         players.put(player.getId(), player);
         return player;
