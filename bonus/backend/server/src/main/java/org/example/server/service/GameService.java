@@ -40,7 +40,6 @@ public class GameService {
         synchronized (game) {
             game.join(joiner);
             joiner.setState(PlayerState.IN_LOBBY);
-            game.setState(GameState.SHIP_PLACEMENT);
             generateBoard(gameId, game.getPlayer1().getId());
             generateBoard(gameId, game.getPlayer2().getId());
             return game;

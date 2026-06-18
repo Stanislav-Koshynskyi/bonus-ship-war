@@ -39,9 +39,6 @@ public class Game {
         else if (player.equals(player2)){
             player2Board = board;
         }
-        if (player1Board != null && player2Board != null){
-            state = GameState.IN_PROGRESS;
-        }
     }
     public boolean everyoneReady(){
         return (player1 != null && player2 != null

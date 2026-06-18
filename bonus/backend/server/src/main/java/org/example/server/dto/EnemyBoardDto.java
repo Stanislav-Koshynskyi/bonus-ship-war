@@ -8,7 +8,6 @@ import org.example.server.entity.enums.CellState;
 public class EnemyBoardDto {
     private final CellState[][] cells;
 
-    /** Якщо board == null (гра ще не IN_PROGRESS) — вся сітка VOID. */
     public EnemyBoardDto(Board board) {
         int size = Board.BOARD_SIZE;
         this.cells = new CellState[size][size];

@@ -1,5 +1,5 @@
 body {
-  max-width: 900px;
+  max-width: 1500px;
   margin: 20px auto;
   padding: 0 20px;
   background: #f4f7f9;
@@ -36,6 +36,7 @@ button {
   background: #3498db;
   color: white;
   border-radius: 4px;
+  border: none;
 }
 
 button:hover {
@@ -54,15 +55,30 @@ button:hover {
   flex-wrap: wrap;
 }
 
-.board-container {
-  width: 400px;
-  height: 400px;
-  margin: 0 auto;
+.wdr-toolbar, .wdr-fields-view{
+    display: none !important;
 }
+
 
 #turn-indicator {
   text-align: center;
   font-size: 18px;
   margin: 15px 0;
   font-weight: bold;
+}
+
+
+.cell-ship { 
+    background-color: #4a90e2 !important; 
+}
+.cell-void {
+    background-color: #ffffff !important; 
+}
+.cell-miss {
+    background-color: #b0b0b0 !important;
+} 
+.cell-hit {
+    background-color: #f5a623 !important;}
+.cell-dead {
+    background-color: #d0021b !important;
 }
