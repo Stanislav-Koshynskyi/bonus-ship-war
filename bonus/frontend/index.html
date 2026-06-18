@@ -13,15 +13,44 @@
 
 </head>
 <body>
-    <h1> Кораблікі </h1>
-    <div id="connection-status">З'єднання: очікування...</div>
+    <body>
 
-    <h2>Моє поле</h2>
-    <div id="my-board" class="board"></div>
+  <h1>Морський бій</h1>
+  <div id="status"></div>
 
-    <h2>Поле суперника</h2>
-    <div id="enemy-board" class="board"></div>
+  <div id="register-screen" class="screen">
+    <input type="text" id="nickname-input" placeholder="Введіть нікнейм">
+    <button id="register-btn">Увійти</button>
+  </div>
 
-    <script src="script.js"></script>
+  <div id="lobby-screen" class="screen hidden">
+    <h2>Лобі</h2>
+    <button id="create-game-btn">Створити гру</button>
+    <div id="games-list"></div>
+  </div>
+
+  <div id="placement-screen" class="screen hidden">
+    <h2>Розміщення кораблів</h2>
+    <div id="my-board-placement" class="board-container"></div>
+    <button id="generate-btn">Згенерувати</button>
+    <button id="ready-btn">Готово</button>
+  </div>
+  <div id="game-screen" class="screen hidden">
+    <h2>Гра</h2>
+    <div class="boards-wrapper">
+      <div>
+        <h3>Моє поле</h3>
+        <div id="my-board-game" class="board-container"></div>
+      </div>
+      <div>
+        <h3>Поле суперника</h3>
+        <div id="enemy-board-game" class="board-container"></div>
+      </div>
+    </div>
+    <div id="turn-indicator"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
 </body>
 </html>
